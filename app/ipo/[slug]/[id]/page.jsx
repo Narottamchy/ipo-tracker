@@ -4,6 +4,7 @@ import Logo from '../../../../components/Logo.jsx';
 import ThemeToggle from '../../../../components/ThemeToggle.jsx';
 import StatusBadge from '../../../../components/StatusBadge.jsx';
 import GmpChart from '../../../../components/GmpChart.jsx';
+import AiAnalysis from '../../../../components/AiAnalysis.jsx';
 import { friendlyError, loadDetail } from '../../../../lib/market.js';
 import { formatMoney, formatMultiplier, formatNumber, formatPercent, show } from '../../../../lib/format.js';
 
@@ -248,6 +249,10 @@ export default async function IpoDetailPage({ params }) {
             <div className="mt-3.5 rounded-xl bg-ink-850 p-8 text-center text-xs text-ink-400">No GMP updates recorded yet.</div>
           )}
         </section>
+
+        <div className="mt-5 sm:mt-6">
+          <AiAnalysis slug={slug} id={id} />
+        </div>
       </main>
       <footer className="mx-auto flex max-w-6xl flex-col gap-2 border-t border-ink-800 px-4 py-6 text-[10px] text-ink-400 sm:flex-row sm:justify-between sm:px-10">
         <span>

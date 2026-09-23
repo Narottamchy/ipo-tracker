@@ -4,7 +4,7 @@ const decode = (value = '') => value.replace(/&#8377;/gi, '₹').replace(/&amp;/
 const plain = (html = '') => decode(html.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 
 const months = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
-const dated = (label, now) => {
+export const dated = (label, now) => {
   const match = label?.match(/^(\d{1,2})-([A-Za-z]{3})$/);
   if (!match || months[match[2]] === undefined) return null;
   let value = Date.UTC(now.getUTCFullYear(), months[match[2]], Number(match[1]));

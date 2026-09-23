@@ -78,10 +78,9 @@ export default function IpoListClient({ initialData, initialError }) {
 
   const countValues = useMemo(() => counts(ipos), [ipos]);
 
-  const gmpTest = GMP_FILTERS.find((filter) => filter.key === gmpFilter)?.test || (() => true);
-
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
+    const gmpTest = GMP_FILTERS.find((filter) => filter.key === gmpFilter)?.test || (() => true);
     return ipos.filter(
       (ipo) =>
         (statusFilter === 'all' || ipo.statusCode === statusFilter) &&
@@ -89,7 +88,7 @@ export default function IpoListClient({ initialData, initialError }) {
         gmpTest(ipo.gmpPercent || 0) &&
         ipo.name.toLowerCase().includes(q)
     );
-  }, [ipos, statusFilter, marketFilter, gmpTest, query]);
+  }, [ipos, statusFilter, marketFilter, gmpFilter, query]);
 
   return (
     <>
