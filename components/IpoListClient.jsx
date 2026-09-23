@@ -255,7 +255,7 @@ export default function IpoListClient({ initialData, initialError }) {
               <Link
                 key={ipo.sourceUrl}
                 href={detailPathFor(ipo.sourceUrl)}
-                className="focus-ring group flex items-center justify-between gap-3 rounded-xl border border-ink-800 bg-ink-850/60 px-4 py-3.5 transition hover:bg-ink-850 sm:grid sm:grid-cols-[minmax(280px,2.1fr)_repeat(3,minmax(130px,1fr))_28px] sm:items-center sm:gap-4 sm:rounded-none sm:border-x-0 sm:border-b sm:border-t-0 sm:border-ink-800 sm:bg-transparent sm:px-6 sm:py-4 sm:last:border-b-0"
+                className="focus-ring group flex items-center justify-between gap-3 [contain-intrinsic-size:auto_84px] [content-visibility:auto] rounded-xl border border-ink-800 bg-ink-850/60 px-4 py-3.5 transition hover:bg-ink-850 sm:grid sm:grid-cols-[minmax(280px,2.1fr)_repeat(3,minmax(130px,1fr))_28px] sm:items-center sm:gap-4 sm:rounded-none sm:border-x-0 sm:border-b sm:border-t-0 sm:border-ink-800 sm:bg-transparent sm:px-6 sm:py-4 sm:last:border-b-0"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-900 font-display text-base font-bold text-brand-300">

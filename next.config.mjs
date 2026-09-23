@@ -7,6 +7,9 @@ const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  // No includeSubDomains: other subdomains of these domains may not be HTTPS-only.
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000' },
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
 ];
 
@@ -14,6 +17,7 @@ const securityHeaders = [
 const nextConfig = {
   outputFileTracingRoot: __dirname,
   poweredByHeader: false,
+  experimental: { inlineCss: true },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
