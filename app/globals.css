@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-ink-950 text-ink-100 font-sans antialiased;
+  font-synthesis: none;
+}
+
+::selection {
+  @apply bg-brand-600/40 text-white;
+}
+
+.focus-ring {
+  @apply outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-400;
+}
+
+/* Chart SVG styling shared between server-rendered markup */
+.chart-grid {
+  stroke: rgba(223, 233, 226, 0.08);
+  stroke-width: 1;
+}
+.chart-line {
+  fill: none;
+  stroke: #5cc797;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.chart-area {
+  fill: url(#area);
+}
+.chart-dot {
+  fill: #0b1512;
+  stroke: #5cc797;
+  stroke-width: 3;
+}
+.chart-text {
+  fill: #8ba296;
+  font: 10px 'DM Sans', sans-serif;
+}
+.chart-value {
+  fill: #d3f5e3;
+  font: 600 10px 'DM Sans', sans-serif;
+}
