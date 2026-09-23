@@ -297,7 +297,7 @@ export default async function IpoDetailPage({ params }) {
       </main>
       <footer className="mx-auto flex max-w-6xl flex-col gap-2 border-t border-ink-800 px-4 py-6 text-[10px] text-ink-400 sm:flex-row sm:justify-between sm:px-10">
         <span>
-          IPO focus <span className="mx-2 text-ink-600">/</span> Built for clarity.
+          IPO focus <span aria-hidden="true" className="mx-2.5 inline-block h-3 w-px bg-ink-600 align-middle" /> Built for clarity.
         </span>
         <span>GMP is unofficial and does not guarantee listing gains.</span>
       </footer>
