@@ -1,15 +1,17 @@
-import { Clock, TrendingUp } from 'lucide-react';
+import { CheckCircle2, Clock, TrendingUp } from 'lucide-react';
 
 const STYLES = {
   O: 'bg-brand-900/60 text-brand-300 border-brand-700/60',
   CT: 'bg-amber-400/10 text-amber-400 border-amber-400/30',
   U: 'bg-ink-700/60 text-ink-200 border-ink-600',
+  C: 'bg-ink-800 text-ink-400 border-ink-600',
 };
 
 const ICONS = {
   O: TrendingUp,
   CT: Clock,
   U: Clock,
+  C: CheckCircle2,
 };
 
 export default function StatusBadge({ statusCode, status }) {

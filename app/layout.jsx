@@ -32,7 +32,7 @@ export default async function RootLayout({ children }) {
   const gaId = GA_MEASUREMENT_IDS[host];
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

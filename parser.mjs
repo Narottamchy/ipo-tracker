@@ -23,7 +23,7 @@ export function parseMarket(html, now = new Date()) {
     if (!link) return [];
     const badges = [...cells.Name.matchAll(/<span\b[^>]*badge[^>]*>([\s\S]*?)<\/span>/gi)].map((match) => plain(match[1]));
     const statusCode = badges.find((value) => ['U', 'O', 'CT', 'C', 'L'].includes(value));
-    if (!['U', 'O', 'CT'].includes(statusCode)) return [];
+    if (!['U', 'O', 'CT', 'C'].includes(statusCode)) return [];
     const number = (label) => {
       const value = plain(cells[label]).match(/(?:₹\s*)?(-?\d[\d,.]*)/)?.[1];
       return value === undefined ? null : Number(value.replace(/,/g, ''));
@@ -34,7 +34,7 @@ export function parseMarket(html, now = new Date()) {
     return [{
       name: decode(link[2]),
       type: badges.find((value) => !['U', 'O', 'CT', 'C', 'L'].includes(value)) || 'IPO',
-      status: { U: 'Upcoming', O: 'Open', CT: 'Closing today' }[statusCode],
+      status: { U: 'Upcoming', O: 'Open', CT: 'Closing today', C: 'Closed' }[statusCode],
       statusCode,
       gmp: gmpMatch && gmpMatch[1] !== '--' ? Number(gmpMatch[1].replace(/,/g, '')) : 0,
       gmpPercent: gmpPercentMatch ? Number(gmpPercentMatch[1].replace(/,/g, '')) : 0,
@@ -50,7 +50,7 @@ export function parseMarket(html, now = new Date()) {
     }];
   });
   if (!ipos.length) throw new Error('Received an unrecognized market page. Try again later.');
-  const statusOrder = { CT: 0, O: 1, U: 2 };
+  const statusOrder = { CT: 0, O: 1, U: 2, C: 3 };
   return ipos.sort((a, b) => (a.closeDateISO || '9999-12-31').localeCompare(b.closeDateISO || '9999-12-31') || statusOrder[a.statusCode] - statusOrder[b.statusCode] || a.name.localeCompare(b.name));
 }
 

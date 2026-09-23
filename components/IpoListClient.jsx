@@ -11,6 +11,7 @@ const STATUS_FILTERS = [
   { key: 'O', label: 'Open' },
   { key: 'CT', label: 'Closing today' },
   { key: 'U', label: 'Upcoming' },
+  { key: 'C', label: 'Closed' },
 ];
 
 const MARKET_FILTERS = [
@@ -30,10 +31,11 @@ const GMP_FILTERS = [
 
 function counts(ipos) {
   return {
-    all: ipos.length,
+    all: ipos.filter((ipo) => ipo.statusCode !== 'C').length,
     O: ipos.filter((ipo) => ipo.statusCode === 'O').length,
     CT: ipos.filter((ipo) => ipo.statusCode === 'CT').length,
     U: ipos.filter((ipo) => ipo.statusCode === 'U').length,
+    C: ipos.filter((ipo) => ipo.statusCode === 'C').length,
     mainboard: ipos.filter((ipo) => !ipo.type.includes('SME')).length,
     sme: ipos.filter((ipo) => ipo.type.includes('SME')).length,
   };
@@ -83,7 +85,7 @@ export default function IpoListClient({ initialData, initialError }) {
     const gmpTest = GMP_FILTERS.find((filter) => filter.key === gmpFilter)?.test || (() => true);
     return ipos.filter(
       (ipo) =>
-        (statusFilter === 'all' || ipo.statusCode === statusFilter) &&
+        (statusFilter === 'all' ? ipo.statusCode !== 'C' : ipo.statusCode === statusFilter) &&
         (marketFilter === 'all' || (marketFilter === 'sme' ? ipo.type.includes('SME') : !ipo.type.includes('SME'))) &&
         gmpTest(ipo.gmpPercent || 0) &&
         ipo.name.toLowerCase().includes(q)
