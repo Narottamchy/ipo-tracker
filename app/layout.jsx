@@ -3,8 +3,9 @@ import { DM_Sans, Manrope } from 'next/font/google';
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, canonicalSiteUrl } from '../lib/site.js';
 
-const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-dm-sans', display: 'swap' });
-const manrope = Manrope({ subsets: ['latin'], weight: ['500', '600', '700', '800'], variable: '--font-manrope', display: 'swap' });
+// latin-ext is needed for the ₹ sign; listing it makes Next preload it instead of discovering it late.
+const dmSans = DM_Sans({ subsets: ['latin', 'latin-ext'], variable: '--font-dm-sans', display: 'swap' });
+const manrope = Manrope({ subsets: ['latin', 'latin-ext'], variable: '--font-manrope', display: 'swap' });
 
 const GA_MEASUREMENT_IDS = {
   'ipo.chynarottam.in': 'G-SSXHGFKGT4',

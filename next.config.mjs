@@ -18,6 +18,17 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   poweredByHeader: false,
   experimental: { inlineCss: true },
+  webpack(config, { webpack, isServer }) {
+    // Next always bundles a polyfill set (Array.prototype.at/flat/flatMap, Object.fromEntries/hasOwn,
+    // String.prototype.trimStart/trimEnd). Every browser in package.json "browserslist" supports
+    // them natively, so drop the ~12 KiB from the client bundle.
+    if (!isServer) {
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(/build[\\/]polyfills[\\/]polyfill-module/, path.join(__dirname, 'lib/empty-module.js'))
+      );
+    }
+    return config;
+  },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
