@@ -74,7 +74,7 @@ export default function IpoListClient({ initialData, initialError }) {
   useEffect(() => {
     const interval = setInterval(() => {
       if (!document.hidden) load();
-    }, 60000);
+    }, 5 * 60_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -307,7 +307,7 @@ export default function IpoListClient({ initialData, initialError }) {
                 ? 'Data unavailable'
                 : 'Fetching live market data…'}
           </span>
-          <span>Refreshes every minute</span>
+          <span>Refreshes automatically</span>
         </div>
       </section>
     </>

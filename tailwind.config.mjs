@@ -13,8 +13,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"DM Sans"', 'sans-serif'],
-        display: ['Manrope', 'sans-serif'],
+        sans: ['var(--font-dm-sans)', '"DM Sans"', 'sans-serif'],
+        display: ['var(--font-manrope)', 'Manrope', 'sans-serif'],
       },
       colors: {
         ink: scale('ink', [950, 900, 850, 800, 700, 600, 500, 400, 300, 200, 100]),

@@ -1,30 +1,60 @@
 import { headers } from 'next/headers';
+import { DM_Sans, Manrope } from 'next/font/google';
 import './globals.css';
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, canonicalSiteUrl } from '../lib/site.js';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3100';
+const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-dm-sans', display: 'swap' });
+const manrope = Manrope({ subsets: ['latin'], weight: ['500', '600', '700', '800'], variable: '--font-manrope', display: 'swap' });
 
 const GA_MEASUREMENT_IDS = {
   'ipo.chynarottam.in': 'G-SSXHGFKGT4',
   'ipo.narottamchy.in': 'G-HCN33R35XJ',
 };
 
+const title = `${SITE_NAME} — ${SITE_TAGLINE}`;
+
 export const metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: 'IPO Focus — Latest & upcoming IPOs',
-    template: '%s — IPO Focus',
-  },
-  description: 'Only the numbers you need: GMP, closing date, and subscription for every live and upcoming IPO.',
+  metadataBase: new URL(canonicalSiteUrl()),
+  title: { default: title, template: `%s — ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    'IPO GMP today',
+    'IPO grey market premium',
+    'upcoming IPO India',
+    'IPO subscription status',
+    'SME IPO GMP',
+    'mainboard IPO',
+    'IPO listing date',
+    'IPO price band',
+  ],
+  category: 'finance',
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'IPO Focus — Latest & upcoming IPOs',
-    description: 'Only the numbers you need: GMP, closing date, and subscription for every live and upcoming IPO.',
-    siteName: 'IPO Focus',
+    title,
+    description: SITE_DESCRIPTION,
+    siteName: SITE_NAME,
     type: 'website',
+    locale: 'en_IN',
+    url: '/',
   },
+  twitter: { card: 'summary_large_image', title, description: SITE_DESCRIPTION },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+  },
+  formatDetection: { telephone: false, email: false, address: false },
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
 export const viewport = {
-  themeColor: '#07100c',
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f7faf8' },
+    { media: '(prefers-color-scheme: dark)', color: '#07100c' },
+  ],
 };
 
 export default async function RootLayout({ children }) {
@@ -32,7 +62,7 @@ export default async function RootLayout({ children }) {
   const gaId = GA_MEASUREMENT_IDS[host];
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-IN" className={`${dmSans.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

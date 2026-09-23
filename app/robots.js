@@ -1,11 +1,11 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3100';
+import { headers } from 'next/headers';
+import { hostSiteUrl } from '../lib/site.js';
 
-export default function robots() {
+export default async function robots() {
+  const site = hostSiteUrl((await headers()).get('host'));
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-    },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    rules: { userAgent: '*', allow: '/', disallow: ['/api/'] },
+    sitemap: `${site}/sitemap.xml`,
+    host: site,
   };
 }

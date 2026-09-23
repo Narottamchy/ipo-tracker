@@ -1,4 +1,6 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { AlertTriangle, ChevronLeft, TrendingDown, TrendingUp } from 'lucide-react';
 import Logo from '../../../../components/Logo.jsx';
 import ThemeToggle from '../../../../components/ThemeToggle.jsx';
@@ -9,6 +11,8 @@ import { friendlyError, loadDetail } from '../../../../lib/market.js';
 import IpoExtraDetails from '../../../../components/IpoExtraDetails.jsx';
 import { getCachedAnalysis } from '../../../../lib/aiAnalyst.js';
 import { getChittorgarhDetails } from '../../../../lib/chittorgarh.js';
+import JsonLd from '../../../../components/JsonLd.jsx';
+import { ipoDescription, ipoJsonLd, ipoTitle } from '../../../../lib/seo.js';
 import { formatMoney, formatMultiplier, formatNumber, formatPercent, show } from '../../../../lib/format.js';
 
 export const dynamic = 'force-dynamic';
@@ -24,11 +28,20 @@ async function getDetail(slug, id) {
 
 export async function generateMetadata({ params }) {
   const { slug, id } = await params;
-  const { data } = await getDetail(slug, id);
-  if (!data) return { title: 'IPO details' };
+  const { data, error } = await getDetail(slug, id);
+  if (error?.status === 404) return { title: 'IPO not found', robots: { index: false, follow: true } };
+  if (!data) return { title: 'IPO details', robots: { index: false, follow: false } };
+
+  const path = `/ipo/${slug}/${id}`;
+  const title = ipoTitle(data);
+  const description = ipoDescription(data);
   return {
-    title: `${data.name} IPO`,
-    description: `Live GMP, subscription, and issue details for ${data.name} IPO.`,
+    title: { absolute: title },
+    description,
+    keywords: [`${data.name} IPO`, `${data.name} IPO GMP`, `${data.name} IPO price band`, `${data.name} IPO subscription status`, `${data.name} IPO listing date`],
+    alternates: { canonical: path },
+    openGraph: { title, description, url: path, type: 'website', siteName: 'IPO Focus', locale: 'en_IN' },
+    twitter: { card: 'summary_large_image', title, description },
   };
 }
 
@@ -59,12 +72,26 @@ function Fact({ label, value }) {
   );
 }
 
+function SectionSkeleton({ height = 'h-48', className = '' }) {
+  return <div aria-hidden="true" className={`${height} ${className} animate-pulse rounded-2xl border border-ink-800 bg-ink-850`} />;
+}
+
+// Slow, cache-backed sections stream in after the core page so they never block first paint.
+async function AiSection({ slug, id }) {
+  const cachedAnalysis = await getCachedAnalysis(slug, id);
+  return <AiAnalysis slug={slug} id={id} initialResult={cachedAnalysis} />;
+}
+
+async function ExtraSection({ slug, data }) {
+  const extraDetails = await getChittorgarhDetails(slug, data).catch(() => null);
+  return <IpoExtraDetails data={extraDetails} />;
+}
+
 export default async function IpoDetailPage({ params }) {
   const { slug, id } = await params;
   const { data, error } = await getDetail(slug, id);
-  const [cachedAnalysis, extraDetails] = error
-    ? [null, null]
-    : await Promise.all([getCachedAnalysis(slug, id), getChittorgarhDetails(slug, data).catch(() => null)]);
+
+  if (error?.status === 404) notFound();
 
   if (error) {
     return (
@@ -89,6 +116,7 @@ export default async function IpoDetailPage({ params }) {
 
   return (
     <>
+      <JsonLd data={ipoJsonLd(data, `/ipo/${slug}/${id}`)} />
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-4 sm:px-10 sm:pb-20 sm:pt-8">
         <Link href="/" className="focus-ring mb-5 inline-flex min-h-[44px] items-center gap-1.5 text-xs text-ink-300 hover:text-ink-100 sm:mb-8">
@@ -128,7 +156,9 @@ export default async function IpoDetailPage({ params }) {
         </section>
 
         <div className="mb-5 sm:mb-6">
-          <AiAnalysis slug={slug} id={id} initialResult={cachedAnalysis} />
+          <Suspense fallback={<SectionSkeleton height="h-40" />}>
+            <AiSection slug={slug} id={id} />
+          </Suspense>
         </div>
 
                 {/* Chart + trend */}
@@ -260,7 +290,9 @@ export default async function IpoDetailPage({ params }) {
           )}
         </section>
 
-        <IpoExtraDetails data={extraDetails} />
+        <Suspense fallback={<SectionSkeleton height="h-64" className="mt-5 sm:mt-6" />}>
+          <ExtraSection slug={slug} data={data} />
+        </Suspense>
 
       </main>
       <footer className="mx-auto flex max-w-6xl flex-col gap-2 border-t border-ink-800 px-4 py-6 text-[10px] text-ink-400 sm:flex-row sm:justify-between sm:px-10">

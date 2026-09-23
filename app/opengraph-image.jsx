@@ -37,8 +37,9 @@ export default async function Image() {
           >
             &#8599;
           </div>
-          <div style={{ fontSize: 44, fontWeight: 800 }}>
-            IPO<span style={{ fontWeight: 500, color: '#8ba296' }}>focus</span>
+          <div style={{ display: 'flex', fontSize: 44, fontWeight: 800 }}>
+            <span>IPO</span>
+            <span style={{ fontWeight: 500, color: '#8ba296' }}>focus</span>
           </div>
         </div>
         <div style={{ fontSize: 58, fontWeight: 700, lineHeight: 1.15, maxWidth: 900 }}>
