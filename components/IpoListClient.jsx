@@ -173,7 +173,7 @@ export default function IpoListClient({ initialData, initialError }) {
                 {filter.label}
                 <b
                   className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
-                    statusFilter === filter.key ? 'bg-white/20' : 'bg-ink-700 text-ink-300'
+                    statusFilter === filter.key ? 'bg-black/25 text-white' : 'bg-ink-700 text-ink-300'
                   }`}
                 >
                   {countValues[filter.key]}
@@ -198,7 +198,7 @@ export default function IpoListClient({ initialData, initialError }) {
                 {filter.key !== 'all' && (
                   <b
                     className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
-                      marketFilter === filter.key ? 'bg-white/20' : 'bg-ink-700 text-ink-300'
+                      marketFilter === filter.key ? 'bg-black/25 text-white' : 'bg-ink-700 text-ink-300'
                     }`}
                   >
                     {countValues[filter.key]}
