@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Loader2, Sparkles } from 'lucide-react';
 import { formatDateTime } from '../lib/format.js';
 
 function renderInline(text) {
@@ -131,30 +131,24 @@ function renderAnalysis(text) {
 }
 
 export default function AiAnalysis({ slug, id, initialResult = null }) {
+  const [state, setState] = useState(initialResult ? 'done' : 'idle');
   const [result, setResult] = useState(initialResult);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (initialResult) return;
-    let cancelled = false;
-    // Silent background fetch: populates the shared cache for future visitors.
-    // No loading state or call-to-action shown — this section simply appears once ready.
-    (async () => {
-      try {
-        const response = await fetch(`/api/ipo/${slug}/${id}/analysis`, { signal: AbortSignal.timeout(60000) });
-        const data = await response.json();
-        if (cancelled || !response.ok) return;
-        setResult(data);
-      } catch {
-        // supplementary content — fail silently, next visitor's background fetch will retry
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug, id]);
-
-  if (!result) return null;
+  async function run() {
+    setState('loading');
+    setError(null);
+    try {
+      const response = await fetch(`/api/ipo/${slug}/${id}/analysis`, { signal: AbortSignal.timeout(60000) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'AI analysis failed.');
+      setResult(data);
+      setState('done');
+    } catch (err) {
+      setError(err.name === 'TimeoutError' ? 'AI analysis is taking too long. Please try again.' : err.message);
+      setState('error');
+    }
+  }
 
   return (
     <section className="rounded-2xl border border-ink-700 bg-ink-900 p-5 shadow-card sm:p-6">
@@ -165,10 +159,41 @@ export default function AiAnalysis({ slug, id, initialResult = null }) {
           <h2 className="mt-1 font-display text-lg font-semibold text-ink-100 sm:text-xl">Scorecard &amp; verdict</h2>
         </div>
       </div>
-      <div className="mt-4">
-        <p className="text-[10px] text-ink-400">Generated {formatDateTime(result.generatedAt)} · shared across all visitors</p>
-        <div className="mt-2 min-w-0 overflow-x-hidden">{renderAnalysis(result.analysis)}</div>
-      </div>
+
+      {state === 'idle' && (
+        <div className="mt-4">
+          <p className="text-xs leading-relaxed text-ink-400">
+            Runs a scoring rubric against this IPO&apos;s live GMP, subscription, and web research data. Shared across all
+            visitors — computed once, then cached for everyone.
+          </p>
+          <button
+            type="button"
+            onClick={run}
+            className="focus-ring mt-3 flex min-h-[40px] items-center gap-2 rounded-lg border border-brand-600 bg-brand-700 px-4 text-xs font-semibold text-white transition hover:bg-brand-600"
+          >
+            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+            Get AI analysis
+          </button>
+        </div>
+      )}
+
+      {state === 'loading' && (
+        <div className="mt-4 flex items-center gap-2 text-xs text-ink-400">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          Analyzing live data…
+        </div>
+      )}
+
+      {state === 'error' && (
+        <div className="mt-4 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-xs text-amber-400">{error}</div>
+      )}
+
+      {state === 'done' && result && (
+        <div className="mt-4">
+          <p className="text-[10px] text-ink-400">Generated {formatDateTime(result.generatedAt)} · shared across all visitors</p>
+          <div className="mt-2 min-w-0 overflow-x-hidden">{renderAnalysis(result.analysis)}</div>
+        </div>
+      )}
     </section>
   );
 }
