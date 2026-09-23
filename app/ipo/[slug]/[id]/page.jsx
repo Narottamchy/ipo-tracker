@@ -6,7 +6,9 @@ import StatusBadge from '../../../../components/StatusBadge.jsx';
 import GmpChart from '../../../../components/GmpChart.jsx';
 import AiAnalysis from '../../../../components/AiAnalysis.jsx';
 import { friendlyError, loadDetail } from '../../../../lib/market.js';
+import IpoExtraDetails from '../../../../components/IpoExtraDetails.jsx';
 import { getCachedAnalysis } from '../../../../lib/aiAnalyst.js';
+import { getChittorgarhDetails } from '../../../../lib/chittorgarh.js';
 import { formatMoney, formatMultiplier, formatNumber, formatPercent, show } from '../../../../lib/format.js';
 
 export const dynamic = 'force-dynamic';
@@ -60,7 +62,9 @@ function Fact({ label, value }) {
 export default async function IpoDetailPage({ params }) {
   const { slug, id } = await params;
   const { data, error } = await getDetail(slug, id);
-  const cachedAnalysis = error ? null : await getCachedAnalysis(slug, id);
+  const [cachedAnalysis, extraDetails] = error
+    ? [null, null]
+    : await Promise.all([getCachedAnalysis(slug, id), getChittorgarhDetails(slug, data).catch(() => null)]);
 
   if (error) {
     return (
@@ -122,6 +126,10 @@ export default async function IpoDetailPage({ params }) {
           <SummaryCard label="Subscription" value={formatMultiplier(data.subscription)} note="times subscribed" />
           <SummaryCard label="Lot size" value={data.lotSize === null ? show(null) : formatNumber(data.lotSize)} note="shares per lot" />
         </section>
+
+        <div className="mb-5 sm:mb-6">
+          <AiAnalysis slug={slug} id={id} initialResult={cachedAnalysis} />
+        </div>
 
                 {/* Chart + trend */}
         <section className="mb-5 grid grid-cols-1 gap-4 sm:mb-6 lg:grid-cols-[1.75fr_1fr]">
@@ -252,9 +260,8 @@ export default async function IpoDetailPage({ params }) {
           )}
         </section>
 
-        <div className="mt-5 sm:mt-6">
-          <AiAnalysis slug={slug} id={id} initialResult={cachedAnalysis} />
-        </div>
+        <IpoExtraDetails data={extraDetails} />
+
       </main>
       <footer className="mx-auto flex max-w-6xl flex-col gap-2 border-t border-ink-800 px-4 py-6 text-[10px] text-ink-400 sm:flex-row sm:justify-between sm:px-10">
         <span>
