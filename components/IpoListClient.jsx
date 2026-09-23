@@ -50,13 +50,13 @@ export default function IpoListClient({ initialData, initialError }) {
   const [query, setQuery] = useState('');
   const busyRef = useRef(false);
 
-  async function load() {
+  async function load(force = false) {
     if (busyRef.current) return;
     busyRef.current = true;
     setBusy(true);
     setError(null);
     try {
-      const response = await fetch('/api/ipos', { signal: AbortSignal.timeout(20000) });
+      const response = await fetch(force ? '/api/ipos?force=1' : '/api/ipos', { signal: AbortSignal.timeout(20000) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       setIpos(data.ipos);
@@ -106,7 +106,7 @@ export default function IpoListClient({ initialData, initialError }) {
         </div>
         <button
           type="button"
-          onClick={load}
+          onClick={() => load(true)}
           disabled={busy}
           className="focus-ring flex min-h-[44px] shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-ink-600 bg-ink-800 px-4 py-2.5 text-sm font-medium text-ink-200 transition hover:bg-ink-700 disabled:cursor-wait disabled:opacity-50 sm:self-auto"
         >
