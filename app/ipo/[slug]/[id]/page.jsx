@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { AlertTriangle, ChevronLeft, TrendingDown, TrendingUp } from 'lucide-react';
 import Logo from '../../../../components/Logo.jsx';
+import ThemeToggle from '../../../../components/ThemeToggle.jsx';
 import StatusBadge from '../../../../components/StatusBadge.jsx';
 import GmpChart from '../../../../components/GmpChart.jsx';
 import { friendlyError, loadDetail } from '../../../../lib/market.js';
@@ -264,10 +265,13 @@ function SiteHeader() {
       <Link href="/" className="focus-ring rounded-md">
         <Logo />
       </Link>
-      <Link href="/" className="focus-ring flex min-h-[44px] items-center gap-1.5 text-xs text-ink-300 hover:text-ink-100">
-        <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        All IPOs
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link href="/" className="focus-ring flex min-h-[44px] items-center gap-1.5 text-xs text-ink-300 hover:text-ink-100">
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          All IPOs
+        </Link>
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

@@ -34,6 +34,11 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
+        />
         {gaId && (
           <>
             {/* eslint-disable-next-line @next/next/no-sync-scripts */}
