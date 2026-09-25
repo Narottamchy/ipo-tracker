@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, ArrowRight, RefreshCw, Search } from 'lucide-react';
 import StatusBadge from './StatusBadge.jsx';
+import { SORT_OPTIONS, sortIpos } from '../lib/sort.js';
 import { detailPathFor, formatDateTime, formatMultiplier, formatNumber, formatPercent } from '../lib/format.js';
 
 const STATUS_FILTERS = [
@@ -49,6 +50,7 @@ export default function IpoListClient({ initialData, initialError }) {
   const [statusFilter, setStatusFilter] = useState('all');
   const [marketFilter, setMarketFilter] = useState('all');
   const [gmpFilter, setGmpFilter] = useState('all');
+  const [sortKey, setSortKey] = useState('listing');
   const [query, setQuery] = useState('');
   const busyRef = useRef(false);
 
@@ -83,14 +85,15 @@ export default function IpoListClient({ initialData, initialError }) {
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     const gmpTest = GMP_FILTERS.find((filter) => filter.key === gmpFilter)?.test || (() => true);
-    return ipos.filter(
+    const matching = ipos.filter(
       (ipo) =>
         (statusFilter === 'all' ? ipo.statusCode !== 'C' : ipo.statusCode === statusFilter) &&
         (marketFilter === 'all' || (marketFilter === 'sme' ? ipo.type.includes('SME') : !ipo.type.includes('SME'))) &&
         gmpTest(ipo.gmpPercent || 0) &&
         ipo.name.toLowerCase().includes(q)
     );
-  }, [ipos, statusFilter, marketFilter, gmpFilter, query]);
+    return sortIpos(matching, sortKey);
+  }, [ipos, statusFilter, marketFilter, gmpFilter, sortKey, query]);
 
   return (
     <>
@@ -156,6 +159,18 @@ export default function IpoListClient({ initialData, initialError }) {
               </option>
             ))}
           </select>
+          <select
+            value={sortKey}
+            onChange={(event) => setSortKey(event.target.value)}
+            aria-label="Sort IPOs"
+            className="focus-ring col-span-2 min-h-[44px] rounded-lg border border-ink-600 bg-ink-800 px-3 text-xs font-medium text-ink-200"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.key} value={option.key}>
+                Sort: {option.label}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="hidden flex-col gap-2 sm:flex">
           <div className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="Filter by IPO status">
@@ -215,6 +230,18 @@ export default function IpoListClient({ initialData, initialError }) {
               {GMP_FILTERS.map((filter) => (
                 <option key={filter.key} value={filter.key}>
                   GMP: {filter.label}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sortKey}
+              onChange={(event) => setSortKey(event.target.value)}
+              aria-label="Sort IPOs"
+              className="focus-ring min-h-[38px] shrink-0 rounded-lg border border-ink-600 bg-ink-800 px-3 text-xs font-medium text-ink-300"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.key} value={option.key}>
+                  Sort: {option.label}
                 </option>
               ))}
             </select>
