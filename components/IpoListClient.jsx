@@ -269,9 +269,10 @@ export default function IpoListClient({ initialData, initialError }) {
 
       {/* List */}
       <section className="mt-5 overflow-hidden rounded-2xl border border-ink-700 bg-ink-900 shadow-card" aria-busy={busy}>
-        <div className="hidden grid-cols-[minmax(280px,2.1fr)_repeat(3,minmax(130px,1fr))_28px] items-center gap-4 border-b border-ink-700 bg-ink-850 px-6 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-ink-400 sm:grid">
+        <div className="hidden grid-cols-[minmax(240px,2fr)_repeat(3,minmax(100px,1fr))_28px] items-center gap-4 lg:grid-cols-[minmax(240px,2fr)_repeat(4,minmax(100px,1fr))_28px] border-b border-ink-700 bg-ink-850 px-6 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-ink-400 sm:grid">
           <span>IPO</span>
           <span>GMP</span>
+          <span className="hidden lg:block">Issue size</span>
           <span>Closing date</span>
           <span>Subscription</span>
           <span />
@@ -282,7 +283,7 @@ export default function IpoListClient({ initialData, initialError }) {
               <Link
                 key={ipo.sourceUrl}
                 href={detailPathFor(ipo.sourceUrl)}
-                className="focus-ring group flex items-center justify-between gap-3 [contain-intrinsic-size:auto_84px] [content-visibility:auto] rounded-xl border border-ink-800 bg-ink-850/60 px-4 py-3.5 transition hover:bg-ink-850 sm:grid sm:grid-cols-[minmax(280px,2.1fr)_repeat(3,minmax(130px,1fr))_28px] sm:items-center sm:gap-4 sm:rounded-none sm:border-x-0 sm:border-b sm:border-t-0 sm:border-ink-800 sm:bg-transparent sm:px-6 sm:py-4 sm:last:border-b-0"
+                className="focus-ring group flex items-center justify-between gap-3 [contain-intrinsic-size:auto_84px] [content-visibility:auto] rounded-xl border border-ink-800 bg-ink-850/60 px-4 py-3.5 transition hover:bg-ink-850 sm:grid sm:grid-cols-[minmax(240px,2fr)_repeat(3,minmax(100px,1fr))_28px] lg:grid-cols-[minmax(240px,2fr)_repeat(4,minmax(100px,1fr))_28px] sm:items-center sm:gap-4 sm:rounded-none sm:border-x-0 sm:border-b sm:border-t-0 sm:border-ink-800 sm:bg-transparent sm:px-6 sm:py-4 sm:last:border-b-0"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-brand-900 font-display text-base font-bold text-brand-300">
@@ -293,6 +294,7 @@ export default function IpoListClient({ initialData, initialError }) {
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                       <span className="rounded-md bg-ink-700 px-2 py-0.5 text-[9px] font-medium text-ink-300">{ipo.type}</span>
                       <StatusBadge statusCode={ipo.statusCode} status={ipo.status} />
+                      {ipo.issueSize && <span className="hidden text-[10px] text-ink-400 sm:inline lg:hidden">{ipo.issueSize}</span>}
                     </div>
                   </div>
                 </div>
@@ -304,12 +306,16 @@ export default function IpoListClient({ initialData, initialError }) {
                   <span className="text-[10px] text-ink-400">
                     {ipo.closeDate || 'Unavailable'} &middot; {formatMultiplier(ipo.subscription)}
                   </span>
+                  {ipo.issueSize && <span className="text-[10px] text-ink-400">Issue {ipo.issueSize}</span>}
                 </div>
                 <div className="hidden sm:flex sm:flex-col sm:items-start sm:gap-1">
                   <strong className="flex items-center gap-1.5 font-display text-sm font-semibold text-brand-400">
                     &#8377;{formatNumber(ipo.gmp)}
                     <span className="rounded bg-brand-900/70 px-1.5 py-0.5 text-[9px] font-semibold text-brand-300">{formatPercent(ipo.gmpPercent)}</span>
                   </strong>
+                </div>
+                <div className="hidden lg:flex lg:flex-col lg:items-start lg:gap-1">
+                  <strong className="font-display text-sm font-semibold text-ink-100">{ipo.issueSize || 'Unavailable'}</strong>
                 </div>
                 <div className="hidden sm:flex sm:flex-col sm:items-start sm:gap-1">
                   <strong className="font-display text-sm font-semibold text-ink-100">{ipo.closeDate || 'Unavailable'}</strong>
